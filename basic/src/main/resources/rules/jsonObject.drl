@@ -1,0 +1,119 @@
+package json.object
+import cn.hutool.json.JSONObject
+
+
+//规则一：年龄匹配和if语句的使用
+rule "json_1"
+    when
+        $json:JSONObject(getInt("age") > 18)
+    then
+         System.out.println("成功匹配到规则一：该用户年龄大于18岁！");
+//         Integer age = $json.getInt("age");
+//         if ($json.getInt("age") > 20 && age < 40) {
+//             System.out.println("成功匹配到规则一：该用户年龄大于20岁小于40！");
+//         } else if (age >= 40 && age < 60){
+//             System.out.println("成功匹配到规则一：该用户年龄大于等于40岁小于60岁！");
+//         } else {
+//             System.out.println("成功匹配到规则一：该用户年龄大于60岁！");
+//         }
+ end
+
+
+
+
+/*  上面的规则也可以通过继承的方式分解为多个规则
+  - 在子规则中可以直接使用父规则的变量，比如下面规则中，使用了父规则中的$json变量。
+ */
+rule "json_1_1" extends "json_1"
+    when
+        JSONObject(getInt("age") < 40)
+    then
+        System.out.println("成功匹配到规则一：该用户年龄大于18岁小于40！:当前年龄为：" + $json.getInt("age"));
+end
+
+rule "json_1_2" extends "json_1"
+    when
+        JSONObject(getInt("age") >= 40)
+        JSONObject(getInt("age") < 60)
+    then
+        System.out.println("成功匹配到规则一：该用户年龄大于等于40岁小于60岁！:当前年龄为：" + $json.getInt("age"));
+end
+
+rule "json_1_3" extends "json_1"
+    when
+        JSONObject(getInt("age") > 60)
+    then
+         System.out.println("成功匹配到规则一：该用户年龄大于60岁！:当前年龄为：" + $json.getInt("age"));
+end
+
+
+
+/*
+  当有多层嵌套时，我们可以使用`from`关键字，拿出每一层的值将其变为变量。方便进一步判断。
+  请看下面的示例：
+  {
+    "name": "lisi",
+    "age": 42,
+    "parent": {
+      "name": "李时珍",
+      "age": 68,
+      "parent": {
+        "name": "李天罡",
+        "age": 90,
+        "parent": {
+          "name": "李元霸",
+          "age": 111
+        }
+      }
+    }
+  }
+*/
+rule "rule_json_2"
+    when
+        $currentUser:JSONObject(getInt("age") > 18)
+        $parent:JSONObject(getInt("age") > 60) from $currentUser.getJSONObject("parent")
+        $parent_1:JSONObject(getInt("age") > 80) from $parent.getJSONObject("parent")
+        $parent_2:JSONObject(getInt("age") > 100) from $parent_1.getJSONObject("parent")
+    then
+        System.out.println("当前用户：【" + $currentUser.getStr("name") + "】年龄为：【" + $currentUser.getInt("age") + "】");
+        System.out.println("当前用户的父亲：【" + $parent.getStr("name") + "】年龄为：【" + $parent.getInt("age") + "】");
+        System.out.println("当前用户的父亲的父亲：【" + $parent_1.getStr("name") + "】年龄为：【" + $parent_1.getInt("age") + "】");
+        System.out.println("当前用户的父亲的父亲的父亲：【" + $parent_2.getStr("name") + "】年龄为：【" + $parent_2.getInt("age") + "】");
+end
+
+
+/*
+嵌套内容为List时的处理
+{
+  "name": "lisi",
+  "age": 42,
+  "son": [
+    {
+      "name": "lida",
+      "age": 22
+    },
+    {
+      "name": "lier",
+      "age": 16
+    },
+    {
+      "name": "lisan",
+      "age": 10
+    }
+  ]
+}
+*/
+
+rule "rule_json_3_1"
+    when
+        $currentUser:JSONObject(getInt("age") > 40)
+        $son_1:JSONObject(getInt("age") < 18) from $currentUser.getJSONArray("son")
+    then
+        System.out.println("当前用户：【" + $currentUser.getStr("name") + "】年龄为：【" + $currentUser.getInt("age") + "】");
+        System.out.println("当前用户的儿子：【" + $son_1.getStr("name") + "】年龄为：【" + $son_1.getInt("age") + "】");
+
+        // 符合条件后，设置其值
+        $son_1.set("age",100);
+end
+
+

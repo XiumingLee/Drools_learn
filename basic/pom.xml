@@ -25,6 +25,14 @@
             <version>7.10.0.Final</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-json -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-json</artifactId>
+            <version>5.5.2</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
