@@ -11,6 +11,7 @@
     <modules>
         <module>basic</module>
         <module>no-config</module>
+        <module>string-test</module>
     </modules>
 
 
