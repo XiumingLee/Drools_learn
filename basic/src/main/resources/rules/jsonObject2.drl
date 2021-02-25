@@ -1,0 +1,18 @@
+package json.object
+import cn.hutool.json.JSONObject
+
+//rule "rule_json_4_1"
+//    when
+//        $currentUser:JSONObject(getInt("age") > 40)
+//    then
+//        System.out.println("当前用户为：" + $currentUser.getStr("name") + ";年龄为：" + $currentUser.getInt("age"));
+//end
+//
+//rule "rule_json_4_2" extends "rule_json_4_1"
+//    when
+//        $user4:JSONObject(getInt("age") >= 90) from $currentUser.getJSONObject("parent").getJSONObject("parent").getJSONObject("parent")
+//    then
+//        System.out.println("当前用户的父级的父级的父级姓名是：" + $user4.getStr("name") + ";满足年龄大于等于90岁的要求。");
+//end
+
+

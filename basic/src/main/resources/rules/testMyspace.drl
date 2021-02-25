@@ -1,0 +1,56 @@
+package drools.myspace
+import com.myspace.test_general_data.GeneralDataEntity
+import com.myspace.test_general_data.FIleOpLog
+import com.myspace.test_general_data.ExtInfo
+
+
+//规则一：年龄匹配和if语句的使用
+rule "general_rule_001"
+    when
+        $generalData:GeneralDataEntity(getData() != null)
+        $fileOpLog:FIleOpLog(getLogtime_hour() > 17 || getLogtime_hour() < 8) from $generalData.getData()
+    then
+         String op_type = $fileOpLog.getOp_type();
+         ExtInfo ext = $generalData.getExt();
+         if ("Print".equals(op_type)) {
+             $generalData.setFlag("3141");
+             ext.setFlag("3141");
+             ext.setDesc("发现非正常事件打印文件，打印时间：" + $fileOpLog.getLogtime_format() + "，打印详情：" + $fileOpLog.getA_desc());
+         }
+         else if ("Cd".equals(op_type)) {
+             $generalData.setFlag("3142");
+             ext.setFlag("3142");
+             ext.setDesc("发现非正常事件刻录文件，刻录时间：" + $fileOpLog.getLogtime_format() + "，刻录详情：" + $fileOpLog.getA_desc());
+         }
+
+         else if ("Open".equals(op_type)) {
+             $generalData.setFlag("3146");
+             ext.setFlag("3146");
+             ext.setDesc("发现非正常事件查看文件，查看时间：" + $fileOpLog.getLogtime_format() + "，查看详情：" + $fileOpLog.getA_desc());
+         }
+
+         else if ("Download".equals(op_type)) {
+             $generalData.setFlag("3143");
+             ext.setFlag("3143");
+             ext.setDesc("发现非正常事件下载文件，下载时间：" + $fileOpLog.getLogtime_format() + "，下载详情：" + $fileOpLog.getA_desc());
+         }
+
+
+         else if ("Trans".equals(op_type)) {
+             $generalData.setFlag("3144");
+             ext.setFlag("3144");
+             ext.setDesc("发现非正常事件发送文件，发送时间：" + $fileOpLog.getLogtime_format() + "，发送详情：" + $fileOpLog.getA_desc());
+         }
+
+         else if ("Email".equals(op_type)) {
+             $generalData.setFlag("3144");
+             ext.setFlag("3144");
+             ext.setDesc("发现非正常事件发送文件，发送时间：" + $fileOpLog.getLogtime_format() + "，发送详情：" + $fileOpLog.getA_desc());
+         }
+
+         else if ("Zip".equals(op_type)) {
+             $generalData.setFlag("3145");
+             ext.setFlag("3145");
+             ext.setDesc("发现非正常事件压缩文件，压缩时间：" + $fileOpLog.getLogtime_format() + "，压缩详情：" + $fileOpLog.getA_desc());
+         }
+ end
